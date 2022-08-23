@@ -212,23 +212,29 @@ namespace Rubberduck.SmartIndenter
         protected static void SpaceHeader(IList<LogicalCodeLine> header, IIndenterSettings settings)
         {
             var commentSkipped = false;
-            var commentLines = 0;
+            var skipLines = 0;
             for (var i = header.Count - 2; i >= 0; i--)
             {
                 if (!commentSkipped && header[i].IsCommentBlock)
                 {
-                    commentLines++;
+                    skipLines++;
                     continue;
                 }
-
                 commentSkipped = true;
+
+                if (header[i].IsPrecompilerDirective)
+                {
+                    skipLines++;
+                    continue;
+                }
+                                
                 if (header[i].IsEmpty)
                 {
                     header.RemoveAt(i);
                 }
                 else
                 {
-                    header.Insert(header.Count - 1 - commentLines,
+                    header.Insert(header.Count - 1 - skipLines,
                         new LogicalCodeLine(
                             Enumerable.Repeat(new AbsoluteCodeLine(string.Empty, settings),
                                 settings.LinesBetweenProcedures), settings));

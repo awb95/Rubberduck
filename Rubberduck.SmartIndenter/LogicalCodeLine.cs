@@ -127,6 +127,11 @@ namespace Rubberduck.SmartIndenter
 
         public bool IsEnumOrTypeMember { get; set; }
 
+        public bool IsPrecompilerDirective
+        {
+            get { return _lines.Any(x => x.IsPrecompilerDirective); }
+        }
+
         public bool IsDeclaration
         {
             get { return _lines.All(x => x.IsDeclaration || x.IsDeclarationContinuation); }
